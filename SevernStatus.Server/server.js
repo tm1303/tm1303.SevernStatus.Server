@@ -7,56 +7,52 @@ var dom = require('xmldom').DOMParser
  
 
 //Lets define a port we want to listen to
-//const PORT=8080; 
-//
-//var options = {
-//  host: 'www.google.co.uk',
-//  port: 80,
-//  path: '/search?q=hello'
-//};
+const PORT=8080; 
+
+
 
 //We need a function which handles requests and send response
-//function handleRequest(request, response){
+function handleRequest(request, response){
 	
 	// request.url
 	//console.log('About to start external request for ' + request.url);
 		
 	requestImport('http://hatrafficinfo.dft.gov.uk/feeds/datex/England/UnplannedEvent/content.xml', function (error, innerResponse, body)
 	{		
-		console.log('Inside request body');
-		
-		console.log('' + innerResponse ==null);
-		console.log('error:' + error);
-		console.log('statusCode' + innerResponse.statusCode);
+		//console.log('Inside request body');
+		//
+		//console.log('' + innerResponse ==null);
+		//console.log('error:' + error);
+		//console.log('statusCode' + innerResponse.statusCode);
 		
 		if (!error && innerResponse.statusCode === 200)
 		{
 			console.log('200 OK');
 			
-			var xml = body.replace('&nbsp;','').replace('&copy;','');
-			console.log(xml);
-			console.log("contains M48: " + xml.indexOf("xml") > -1);
+			var xml = body.replace('&nbsp;','').replace('&copy;','').replace(' xmlns="http://datex2.eu/schema/1_0/1_0" modelBaseVersion="1.0"', '');
+			//console.log(xml);
+			console.log("contains M48: " + (xml.indexOf("M48") > -1));
 			
 			var doc = new dom().parseFromString(xml);
+			//console.log(doc);
 			
-			var nodes = xpath.select('//situation[//groupOfLocations//descriptor/value="M48"]//nonGeneralPublicComment/comment/value', doc);
-			console.log(nodes.length);
-			// console.log(nodes[0].localName + ": " + nodes[0].firstChild.data)
+			var nodes = xpath.select('//situation[.//groupOfLocations//descriptor/value="M48"]//nonGeneralPublicComment/comment/value', doc);
+			console.log('length: ' + nodes.length);
+			console.log('nodes[0].data: ' + nodes[0].firstChild.data);
 			// console.log("node: " + nodes[0].toString())
 						
-			response.end(nodes[0].localName + ": " + nodes[0].data);
+			response.end(nodes[0].firstChild.data);
 		}
 	});		
 	
-//}
+}
 
 //Create a server
-//var server = http.createServer(handleRequest);
+var server = http.createServer(handleRequest);
 
 //Lets start our server
-//server.listen(PORT, function(){
-    //Callback triggered when server is successfully listening. Hurray!
-   // console.log("Server listening on: http://localhost:%s", PORT);
-//});	
+server.listen(PORT, function(){
+   console.log("Server listening on: http://localhost:%s", PORT);
+});	
 
 
