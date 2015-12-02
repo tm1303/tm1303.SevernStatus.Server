@@ -20,7 +20,7 @@ function handleRequest(request, response){
 	}
 		
 	var queryData = url.parse(request.url, true).query;	
-	var road = queryData.road;
+	var road = queryData.road.toUpperCase();
 	
 	requestImport('http://hatrafficinfo.dft.gov.uk/feeds/datex/England/UnplannedEvent/content.xml', function (error, innerResponse, body)
 	{		
