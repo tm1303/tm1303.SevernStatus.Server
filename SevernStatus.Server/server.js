@@ -1,22 +1,27 @@
-//Lets require/import the HTTP module
 var http = require('http');
 var requestImport = require('request');
+var url = require('url');
 
 var xpath = require('xpath')
 var dom = require('xmldom').DOMParser
- 
 
-//Lets define a port we want to listen to
 const PORT=8080; 
 
 
 
 //We need a function which handles requests and send response
 function handleRequest(request, response){
-	
-	// request.url
-	//console.log('About to start external request for ' + request.url);
 		
+	if( request.url.indexOf('favicon.ico') > -1)
+	{
+		console.log('facicon request cancelled');
+		response.end();
+		return;
+	}
+		
+	var queryData = url.parse(request.url, true).query;	
+	var road = queryData.road;
+	
 	requestImport('http://hatrafficinfo.dft.gov.uk/feeds/datex/England/UnplannedEvent/content.xml', function (error, innerResponse, body)
 	{		
 		//console.log('Inside request body');
@@ -31,13 +36,21 @@ function handleRequest(request, response){
 			
 			var xml = body.replace('&nbsp;','').replace('&copy;','').replace(' xmlns="http://datex2.eu/schema/1_0/1_0" modelBaseVersion="1.0"', '');
 			//console.log(xml);
-			console.log("contains M48: " + (xml.indexOf("M48") > -1));
+			console.log("contains " + road + ": " + (xml.indexOf(road) > -1));
 			
 			var doc = new dom().parseFromString(xml);
 			//console.log(doc);
 			
-			var nodes = xpath.select('//situation[.//groupOfLocations//descriptor/value="M48"]//nonGeneralPublicComment/comment/value', doc);
+			var nodes = xpath.select('//situation[.//groupOfLocations//descriptor/value="' + road + '"]//nonGeneralPublicComment/comment/value', doc);
 			console.log('length: ' + nodes.length);
+			
+			if(nodes.length===0)
+			{
+				console.log("No notifications found for " + road);
+				response.end("No notifications found for " + road);
+				return;
+			}
+			
 			console.log('nodes[0].data: ' + nodes[0].firstChild.data);
 			// console.log("node: " + nodes[0].toString())
 						
