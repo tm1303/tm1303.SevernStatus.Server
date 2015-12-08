@@ -20,9 +20,8 @@ function handleRequest(request, response){
 	}
 		
 	var queryData = url.parse(request.url, true).query;	
-	if( request.url.indexOf('favicon.ico') > -1)
+	if( !queryData.road)
 	{
-		console.log('facicon request cancelled');
 		response.end('expected parameter: road=[roadname]');
 		return;
 	}
