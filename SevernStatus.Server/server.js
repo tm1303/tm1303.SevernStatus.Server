@@ -5,7 +5,7 @@ var url = require('url');
 var xpath = require('xpath')
 var dom = require('xmldom').DOMParser
 
-const PORT=8080; 
+const PORT=5000; 
 
 
 
@@ -65,7 +65,7 @@ var server = http.createServer(handleRequest);
 
 //Lets start our server
 server.listen(PORT, function(){
-   console.log("Server listening on: http://localhost:%s", PORT);
+	console.log("Server listening on port: %s", PORT);
 });	
 
 
