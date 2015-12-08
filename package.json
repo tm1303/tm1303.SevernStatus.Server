@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/tm1303/tm1303.SevernStatus.Server/issues"
   },
-  "homepage": "https://github.com/tm1303/tm1303.SevernStatus.Server"
+  "homepage": "https://github.com/tm1303/tm1303.SevernStatus.Server",
+  "scripts": {
+    "start": "node SevernStatus.Server/server.js"
+	}
 }
