@@ -28,7 +28,7 @@ function handleRequest(request, response){
 	
 	var road = queryData.road.toUpperCase();
 	
-	requestImport('http://hatrafficinfo.dft.gov.uk/feeds/datex/England/UnplannedEvent/content.xml', function (error, innerResponse, body)
+	requestImport('http://m.highways.gov.uk/feeds/rss/UnplannedEvents/South%20West.xml', function (error, innerResponse, body)
 	{		
 		//console.log('Inside request body');
 		//
@@ -41,13 +41,13 @@ function handleRequest(request, response){
 			console.log('200 OK');
 			
 			var xml = body.replace('&nbsp;','').replace('&copy;','').replace(' xmlns="http://datex2.eu/schema/1_0/1_0" modelBaseVersion="1.0"', '');
-			//console.log(xml);
+			console.log(xml);
 			console.log("contains " + road + ": " + (xml.indexOf(road) > -1));
 			
 			var doc = new dom().parseFromString(xml);
 			//console.log(doc);
 			
-			var nodes = xpath.select('//situation[.//groupOfLocations//descriptor/value="' + road + '"]//nonGeneralPublicComment/comment/value', doc);
+			var nodes = xpath.select('//item[./road="' + road + '"]/description', doc);
 			console.log('length: ' + nodes.length);
 			
 			if(nodes.length===0)
