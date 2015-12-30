@@ -41,14 +41,14 @@ function handleRequest(request, response){
 			console.log('200 OK');
 			
 			var xml = body.replace('&nbsp;','').replace('&copy;','').replace(' xmlns="http://datex2.eu/schema/1_0/1_0" modelBaseVersion="1.0"', '');
-			console.log(xml);
-			console.log("contains " + road + ": " + (xml.indexOf(road) > -1));
+			//console.log(xml);
+			//console.log("contains " + road + ": " + (xml.indexOf(road) > -1));
 			
 			var doc = new dom().parseFromString(xml);
 			//console.log(doc);
 			
 			var nodes = xpath.select('//item[./road="' + road + '"]/description', doc);
-			console.log('length: ' + nodes.length);
+			console.log('result length: ' + nodes.length);
 			
 			if(nodes.length===0)
 			{
@@ -57,10 +57,22 @@ function handleRequest(request, response){
 				return;
 			}
 			
+			var output =[] ;
+			
+			var i =0;
+			while ( i < nodes.length ) {
+				
+				console.log('nodes[' + i + '].data: ' + nodes[i].firstChild.data);
+			
+				var item = nodes[i].firstChild.data;				
+				output.push(item);
+				i++;
+			};
+			
 			console.log('nodes[0].data: ' + nodes[0].firstChild.data);
 			// console.log("node: " + nodes[0].toString())
 						
-			response.end(nodes[0].firstChild.data);
+			response.end(output.join("\n\n"));
 		}
 	});		
 	
