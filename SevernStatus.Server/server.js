@@ -27,6 +27,12 @@ function handleRequest(request, response){
 	}
 	
 	var road = queryData.road.toUpperCase();
+	var format = 'text';
+	
+	if(queryData.format)
+	{
+		format = queryData.format.toUpperCase();
+	}
 	
 	requestImport('http://m.highways.gov.uk/feeds/rss/UnplannedEvents/South%20West.xml', function (error, innerResponse, body)
 	{		
@@ -44,6 +50,11 @@ function handleRequest(request, response){
 			//console.log(xml);
 			//console.log("contains " + road + ": " + (xml.indexOf(road) > -1));
 			
+			if(format === 'XML'){
+				response.end(xml);
+				return;
+			}
+			
 			var doc = new dom().parseFromString(xml);
 			//console.log(doc);
 			
@@ -60,16 +71,16 @@ function handleRequest(request, response){
 			var output =[] ;
 			
 			var i =0;
-			while ( i < nodes.length ) {
+			while ( i < nodes.length ) {		
 				
-				console.log('nodes[' + i + '].data: ' + nodes[i].firstChild.data);
+				//console.log('nodes[' + i + '].data: ' + nodes[i].firstChild.data);
 			
 				var item = nodes[i].firstChild.data;				
 				output.push(item);
-				i++;
+				i++;				
 			};
 			
-			console.log('nodes[0].data: ' + nodes[0].firstChild.data);
+			//console.log('nodes[0].data: ' + nodes[0].firstChild.data);
 			// console.log("node: " + nodes[0].toString())
 						
 			response.end(output.join("\n\n"));
